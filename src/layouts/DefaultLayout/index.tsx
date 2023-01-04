@@ -6,7 +6,6 @@ import { LayoutContainer } from './styles'
 export function DefaultLayout (): any {
   return (
     <>
-        teste
       <LayoutContainer>
         <Header />
         <Outlet />
