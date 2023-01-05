@@ -6,17 +6,19 @@ import { Timer, Scroll } from 'phosphor-react'
 
 import logo from '../../assets/logo-pomodoro.svg'
 
+import { NavLink } from 'react-router-dom'
+
 export function Header (): any {
   return (
     <HeaderContainer>
       <img src={logo} alt='' />
       <nav>
-        <a href=''>
+        <NavLink to='/'>
           <Timer size={24} />
-        </a>
-        <a href=''>
+        </NavLink>
+        <NavLink to='/history'>
           <Scroll size={24} />
-        </a>
+        </NavLink>
       </nav>
     </HeaderContainer>
   )
