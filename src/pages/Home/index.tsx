@@ -15,7 +15,15 @@ export function Home (): any {
             placeholder='Dê um nome para sua tarefa'
             type='text'
             name='task'
+            list='task-suggestion'
           />
+          <datalist id="task-suggestion">
+            <option value="Estudar" />
+            <option value="Trabalhar" />
+            <option value="Ler" />
+            <option value="Fazer exercícios" />
+            <option value="Banana" />
+          </datalist>
           <label>
             durante
           </label>
@@ -23,6 +31,9 @@ export function Home (): any {
             placeholder="00"
             type="number"
             id="minutesAmount"
+            step={5}
+            min={0}
+            max={60}
           />
           <span>minutos</span>
         </FormContainer>
