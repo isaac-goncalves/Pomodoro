@@ -1,6 +1,7 @@
 import { Play } from 'phosphor-react'
-import { useState, React } from 'react'
+import { useState, React, useEffect } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { differenceInSeconds } from 'date-fns'
 
 import * as zod from 'zod'
 
@@ -30,6 +31,7 @@ interface Cycle {
   id: string
   task: string
   minutesAmount: number
+  startDate?: Date
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -46,11 +48,24 @@ export function Home () {
     }
   })
 
+  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
+
+  useEffect(() => {
+    if (activeCycleId != null) {
+      setInterval(() => {
+        setAmountSecondsPassed(
+          differenceInSeconds(new Date(), activeCycle.startDate)
+        )
+      }, 1000)
+    }
+  }, [activeCycle])
+
   function handleCreateNewCycle (data: NewCycleFormData): any {
     const newCycle: Cycle = {
       id: String(new Date().getTime()),
       task: data.task,
-      minutesAmount: data.minutesAmount
+      minutesAmount: data.minutesAmount,
+      startDate: new Date()
     }
 
     setCycles((state) => [...state, newCycle])
@@ -59,24 +74,20 @@ export function Home () {
     reset()
   }
 
-  console.log(formState.errors)
+  const totalSeconds = (activeCycle != null) ? activeCycle.minutesAmount * 60 : 0
 
-  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
-
-  const totalSeconds = (activeCycle) ? activeCycle.minutesAmount * 60 : 0
-
-  const currentSeconds = (activeCycle) ? totalSeconds - amountSecondsPassed : 0
+  const currentSeconds = (activeCycle != null) ? totalSeconds - amountSecondsPassed : 0
 
   const minutesAmount = Math.floor(currentSeconds / 60)
 
   const secondsAmount = currentSeconds % 60
-
 
   const minutes = String(minutesAmount).padStart(2, '0')
 
   const seconds = String(secondsAmount).padStart(2, '0')
 
   const task = watch('task')
+  
   const isSubmitDisabled = task.length === 0
 
   return (
@@ -125,16 +136,16 @@ export function Home () {
             {minutes[0]}
           </span>
           <span>
-          {minutes[0]}
+            {minutes[1]}
           </span>
           <Separator>
             :
           </Separator>
           <span>
-          {seconds[0]}
+            {seconds[0]}
           </span>
           <span>
-          {seconds[0]}
+            {seconds[1]}
           </span>
         </CountdownContainer>
         <StartCountdownButton
