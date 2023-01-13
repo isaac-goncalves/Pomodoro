@@ -57,7 +57,8 @@ export function Home () {
 
   useEffect(() => {
     let interval: number
-    if (activeCycle) {
+    console.log(activeCycle)
+    if (activeCycle != null) {
       interval = setInterval(() => {
         const secondsDifference = differenceInSeconds(
           new Date(),
@@ -77,6 +78,7 @@ export function Home () {
             )
           )
           clearInterval(interval)
+          setActiveCycleId(null)
         } else {
           setAmountSecondsPassed(secondsDifference)
           console.log(' not finished yet ')
@@ -84,9 +86,8 @@ export function Home () {
         console.log(secondsDifference + ' total ' + totalSeconds)
       }, 1000)
     }
-    
-    return () => clearInterval(interval)
 
+    return () => clearInterval(interval)
   }, [activeCycle, totalSeconds, activeCycleId])
 
   // console.log(cycles)
