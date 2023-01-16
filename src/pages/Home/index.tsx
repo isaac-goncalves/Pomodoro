@@ -7,6 +7,8 @@ import * as zod from 'zod'
 
 import { useForm } from 'react-hook-form'
 
+import { NewCycleForm } from './components/NewCycleForm'
+
 import {
   CountdownContainer,
   FormContainer,
@@ -17,6 +19,7 @@ import {
   StopCountdownButton,
   TaskInput
 } from './styles'
+import { Countdown } from './components/Countdown'
 
 const newCycleFormValidationSchema = zod.object({
   task: zod.string().min(1, 'informe a tarefa'),
@@ -79,10 +82,12 @@ export function Home () {
           )
           clearInterval(interval)
           setActiveCycleId(null)
+          console.log('finished')
         } else {
           setAmountSecondsPassed(secondsDifference)
           console.log(' not finished yet ')
         }
+        // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
         console.log(secondsDifference + ' total ' + totalSeconds)
       }, 1000)
     }
@@ -104,7 +109,6 @@ export function Home () {
     setCycles((state) => [...state, newCycle])
     setActiveCycleId(newCycle.id)
     setAmountSecondsPassed(0)
-
     reset()
   }
 
@@ -144,58 +148,12 @@ export function Home () {
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onSubmit={handleSubmit(handleCreateNewCycle)}
       >
-        <FormContainer>
-          <label htmlFor=''>Vou trabalhar em </label>
-          <TaskInput
-            placeholder='Dê um nome para sua tarefa'
-            type='text'
-            disabled={!(activeCycle == null)}
-            {
-            ...register('task')
-            }
-          />
-          <datalist id="task-suggestion">
-            <option value="Estudar" />
-            <option value="Trabalhar" />
-            <option value="Ler" />
-            <option value="Fazer exercícios" />
-            <option value="Banana" />
-          </datalist>
-          <label>
-            durante
-          </label>
-          <MinutesAmountInput
-            placeholder="00"
-            type="number"
-            id="minutesAmount"
-            step={5}
-            min={1}
-            disabled={!(activeCycle == null)}
-            // max={60}
-            {
-            ...register('minutesAmount', { valueAsNumber: true })
-            }
-          />
-          <span>minutos</span>
-        </FormContainer>
 
-        <CountdownContainer >
-          <span>
-            {minutes[0]}
-          </span>
-          <span>
-            {minutes[1]}
-          </span>
-          <Separator>
-            :
-          </Separator>
-          <span>
-            {seconds[0]}
-          </span>
-          <span>
-            {seconds[1]}
-          </span>
-        </CountdownContainer>
+        <NewCycleForm />
+
+        <Countdown/>
+
+
         {
           (activeCycle != null)
             ? (
