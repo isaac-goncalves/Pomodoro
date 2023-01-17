@@ -1,35 +1,17 @@
 import { HandPalm, Play } from 'phosphor-react'
-import { useState, React, useEffect } from 'react'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { differenceInSeconds } from 'date-fns'
-
-import * as zod from 'zod'
-
-import { useForm } from 'react-hook-form'
+import { useState, createContext, React } from 'react'
 
 import { NewCycleForm } from './components/NewCycleForm'
 
+import { watch } from  
+
 import {
-  CountdownContainer,
-  FormContainer,
   HeaderContainer,
-  MinutesAmountInput,
-  Separator,
   StartCountdownButton,
-  StopCountdownButton,
-  TaskInput
+  StopCountdownButton
+
 } from './styles'
 import { Countdown } from './components/Countdown'
-
-const newCycleFormValidationSchema = zod.object({
-  task: zod.string().min(1, 'informe a tarefa'),
-  minutesAmount: zod
-    .number()
-    .min(1, 'O intervalo precisa ser de no max 60 minutos e no minimo 5')
-    .max(60, 'O intervalo precisa ser de no max 60')
-})
-
-type NewCycleFormData = zod.infer<typeof newCycleFormValidationSchema>
 
 interface Cycle {
   id: string
@@ -40,76 +22,38 @@ interface Cycle {
   finishedDate?: Date
 }
 
+interface CyclesContextType { // quais as informaçoes que eu vou receber
+  activeCycle: Cycle | undefined
+  activeCycleId: string | null
+  markCurrentCycleAsFinished
+
+}
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+export const CyclesContext = createContext({} as CyclesContextType)
+
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function Home () {
   const [cycles, setCycles] = useState<Cycle[]>([])
   const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
-  const [amountSecondsPassed, setAmountSecondsPassed] = useState(0)
-
-  const { register, handleSubmit, watch, reset } = useForm<NewCycleFormData>({
-    resolver: zodResolver(newCycleFormValidationSchema),
-    defaultValues: {
-      task: '',
-      minutesAmount: 0
-    }
-  })
 
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
-
-  const totalSeconds = (activeCycle != null) ? activeCycle.minutesAmount * 60 : 0
-
-  useEffect(() => {
-    let interval: number
-    console.log(activeCycle)
-    if (activeCycle != null) {
-      interval = setInterval(() => {
-        const secondsDifference = differenceInSeconds(
-          new Date(),
-          activeCycle.startDate
-        )
-        if (secondsDifference >= totalSeconds) {
-          setCycles(
-            state => state.map((cycle) => {
-              if (cycle.id === activeCycleId) {
-                return {
-                  ...cycle, finishedDate: new Date()
-                }
-              } else {
-                return cycle
-              }
-            }
-            )
-          )
-          clearInterval(interval)
-          setActiveCycleId(null)
-          console.log('finished')
-        } else {
-          setAmountSecondsPassed(secondsDifference)
-          console.log(' not finished yet ')
-        }
-        // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
-        console.log(secondsDifference + ' total ' + totalSeconds)
-      }, 1000)
-    }
-
-    return () => clearInterval(interval)
-  }, [activeCycle, totalSeconds, activeCycleId])
 
   // console.log(cycles)
   // console.log(activeCycleId)
 
-  function handleCreateNewCycle (data: NewCycleFormData): any {
-    const newCycle: Cycle = {
-      id: String(new Date().getTime()),
-      task: data.task,
-      minutesAmount: data.minutesAmount,
-      startDate: new Date()
-    }
-
-    setCycles((state) => [...state, newCycle])
-    setActiveCycleId(newCycle.id)
-    setAmountSecondsPassed(0)
-    reset()
+  function markCurrentCycleAsFinished (): any {
+    setCycles(state =>
+      state.map((cycle) => {
+        if (cycle.id === activeCycleId) {
+          return {
+            ...cycle, finishedDate: new Date()
+          }
+        } else {
+          return cycle
+        }
+      }
+      )
+    )
   }
 
   function handleInterruptCycle (): any {
@@ -127,17 +71,7 @@ export function Home () {
     return setActiveCycleId(null)
   }
 
-  const currentSeconds = (activeCycle != null) ? totalSeconds - amountSecondsPassed : 0
-
-  const minutesAmount = Math.floor(currentSeconds / 60)
-
-  const secondsAmount = currentSeconds % 60
-
-  const minutes = String(minutesAmount).padStart(2, '0')
-
-  const seconds = String(secondsAmount).padStart(2, '0')
-
-  const task = watch('task')
+  const task = watch('task') //
 
   const isSubmitDisabled = task.length === 0
 
@@ -146,14 +80,16 @@ export function Home () {
       <form
         action="submit"
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        onSubmit={handleSubmit(handleCreateNewCycle)}
+        // onSubmit={handleSubmit(handleCreateNewCycle)}
       >
-
-        <NewCycleForm />
-
-        <Countdown/>
-
-
+        <CyclesContext.Provider value={{ // Context
+          activeCycle,
+          activeCycleId,
+          markCurrentCycleAsFinished
+        }}>
+          {/* <NewCycleForm register={undefined} activeCycle={undefined} /> */}
+          <Countdown />
+        </CyclesContext.Provider>
         {
           (activeCycle != null)
             ? (

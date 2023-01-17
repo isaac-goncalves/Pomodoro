@@ -48,4 +48,5 @@ flex: 1;
 
 export const MinutesAmountInput = styled(BaseInput)`
 width: 4rem;
+
 `
