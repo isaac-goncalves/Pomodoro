@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useContext } from 'react'
 
 import { CountdownContainer, Separator } from './styles'
 
@@ -7,9 +7,7 @@ import { differenceInSeconds } from 'date-fns'
 import { CyclesContext } from '../../index'
 
 export function Countdown (): any {
-  const { activeCycle, activeCycleId, markCurrentCycleAsFinished } = useContext(CyclesContext)
-
-  const [amountSecondsPassed, setAmountSecondsPassed] = useState(0)
+  const { setSecondsPassed, amountSecondsPassed, activeCycle, activeCycleId, markCurrentCycleAsFinished } = useContext(CyclesContext)
 
   const totalSeconds = (activeCycle != null) ? activeCycle.minutesAmount * 60 : 0
 
@@ -26,11 +24,11 @@ export function Countdown (): any {
         if (secondsDifference >= totalSeconds) {
           markCurrentCycleAsFinished()
           clearInterval(interval)
-          setAmountSecondsPassed(totalSeconds)
+          setSecondsPassed(totalSeconds)
           // setActiveCycleId(null)
           console.log('finished')
         } else {
-          setAmountSecondsPassed(secondsDifference)
+          setSecondsPassed(secondsDifference)
           console.log(' not finished yet ')
         }
         // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
