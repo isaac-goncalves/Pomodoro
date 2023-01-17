@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 
 import { CountdownContainer, Separator } from './styles'
 
@@ -7,7 +7,7 @@ import { differenceInSeconds } from 'date-fns'
 import { CyclesContext } from '../../index'
 
 export function Countdown (): any {
-  const { activeCycle, activeCycleId, markCurrentCycleAsFinished } = React.useContext(CyclesContext)
+  const { activeCycle, activeCycleId, markCurrentCycleAsFinished } = useContext(CyclesContext)
 
   const [amountSecondsPassed, setAmountSecondsPassed] = useState(0)
 
