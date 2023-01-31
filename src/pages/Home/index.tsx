@@ -18,7 +18,7 @@ import {
 
 import { Countdown } from './components/Countdown'
 
-interface Cycle {
+interface Cycle { // quais as informaçoes que eu vou receber
   id: string
   task: string
   minutesAmount: number
@@ -37,7 +37,7 @@ interface CyclesContextType { // quais as informaçoes que eu vou receber
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 export const CyclesContext = createContext({} as CyclesContextType)
 
-const newCycleFormValidationSchema = zod.object({
+const newCycleFormValidationSchema = zod.object({ // validação do formulario
   task: zod.string().min(1, 'informe a tarefa'),
   minutesAmount: zod
     .number()
@@ -45,7 +45,7 @@ const newCycleFormValidationSchema = zod.object({
     .max(60, 'O intervalo precisa ser de no max 60')
 })
 
-type NewCycleFormData = zod.infer<typeof newCycleFormValidationSchema>
+type NewCycleFormData = zod.infer<typeof newCycleFormValidationSchema> // inferir o tipo de dados que eu vou receber
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function Home () {
@@ -53,23 +53,23 @@ export function Home () {
   const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
   const [amountSecondsPassed, setAmountSecondsPassed] = useState(0)
 
-  const newCycleForm = useForm<NewCycleFormData>({
+  const newCycleForm = useForm<NewCycleFormData>({ // validação do formulario
     resolver: zodResolver(newCycleFormValidationSchema),
-    defaultValues: {
+    defaultValues: { 
       task: '',
       minutesAmount: 0
     }
   })
 
-  const { handleSubmit, reset, watch } = newCycleForm
+  const { handleSubmit, reset, watch } = newCycleForm  
 
-  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
+  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)  
 
-  function setSecondsPassed (seconds: number): void {
+  function setSecondsPassed (seconds: number): void { // função para setar o tempo
     setAmountSecondsPassed(seconds)
   }
 
-  function markCurrentCycleAsFinished (): any {
+  function markCurrentCycleAsFinished (): any { // função para marcar o ciclo como finalizado
     setCycles(state =>
       state.map((cycle) => {
         if (cycle.id === activeCycleId) {
@@ -84,7 +84,7 @@ export function Home () {
     )
   }
 
-  function handleCreateNewCycle (data: NewCycleFormData): any {
+  function handleCreateNewCycle (data: NewCycleFormData): any { // função para criar um novo ciclo
     const newCycle: Cycle = {
       id: String(new Date().getTime()),
       task: data.task,
@@ -99,7 +99,7 @@ export function Home () {
     reset()
   }
 
-  function handleInterruptCycle (): any {
+  function handleInterruptCycle (): any { // função para interromper o ciclo
     setCycles((state) => state.map((cycle) => {
       if (cycle.id === activeCycleId) {
         return {
@@ -118,7 +118,7 @@ export function Home () {
 
   const isSubmitDisabled = task.length === 0
 
-  return (
+  return ( // JSX
     <HeaderContainer>
       <form
         action="submit"
