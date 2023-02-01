@@ -1,3 +1,4 @@
+/* eslint-disable react/react-in-jsx-scope */
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { HandPalm, Play } from 'phosphor-react'
@@ -32,8 +33,8 @@ type NewCycleFormData = zod.infer<typeof newCycleFormValidationSchema> // inferi
 export function Home () {
   const {
     activeCycle,
-    InterruptCurrentCycle,
-    CreateNewCycle
+    interruptCurrentCycle,
+    createNewCycle
   } = useContext(CyclesContext)
 
   const newCycleForm = useForm<NewCycleFormData>({ // validação do formulario
@@ -44,7 +45,12 @@ export function Home () {
     }
   })
 
-  const { handleSubmit, watch } = newCycleForm
+  const { handleSubmit, watch, reset } = newCycleForm
+
+  function handleCreateNewCycle (data: NewCycleFormData): void {
+    createNewCycle(data)
+    reset()
+  }
 
   const task = watch('task') //
 
@@ -57,7 +63,7 @@ export function Home () {
         <form
           action="submit"
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          onSubmit={handleSubmit(CreateNewCycle)}
+          onSubmit={handleSubmit(handleCreateNewCycle)}
         >
           <FormProvider {...newCycleForm}>
             <NewCycleForm />
@@ -66,7 +72,7 @@ export function Home () {
           {
             (activeCycle != null)
               ? (
-                <StopCountdownButton onClick={InterruptCurrentCycle} type="submit">
+                <StopCountdownButton onClick={interruptCurrentCycle} type="submit">
                   <HandPalm size={24} />
                   Interromper
                 </StopCountdownButton>

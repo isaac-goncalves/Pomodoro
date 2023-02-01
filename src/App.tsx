@@ -11,10 +11,8 @@ export function App (): any {
     <ThemeProvider theme={DefaultTheme}>
       <BrowserRouter>
         <CyclesContextProvider>
-
           <Router />
         </CyclesContextProvider>
-
       </BrowserRouter>
       <GlobalStyle />
     </ThemeProvider>
