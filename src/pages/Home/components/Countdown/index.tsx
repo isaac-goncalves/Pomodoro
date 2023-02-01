@@ -21,10 +21,10 @@ export function Countdown (): any {
           new Date(),
           activeCycle.startDate ?? new Date()
         )
-        if (secondsDifference >= totalSeconds) {
+        if (secondsDifference >= 5) {
           markCurrentCycleAsFinished()
-          clearInterval(interval)
           setSecondsPassed(totalSeconds)
+          clearInterval(interval)
           // setActiveCycleId(null)
           console.log('finished')
         } else {
