@@ -1,5 +1,4 @@
-/* eslint-disable react/react-in-jsx-scope */
-import { createContext, ReactNode, useState, useReducer } from 'react'
+import { createContext, useState } from 'react'
 
 interface CreateCycleData {
   task: string
@@ -15,8 +14,7 @@ interface Cycle { // quais as informaçoes que eu vou receber
   finishedDate?: Date
 }
 
-interface CyclesContextType {
-  cycles: Cycle[]// quais as informaçoes que eu vou receber
+interface CyclesContextType { // quais as informaçoes que eu vou receber
   activeCycle: Cycle | undefined
   activeCycleId: string | null
   amountSecondsPassed: number
@@ -26,11 +24,10 @@ interface CyclesContextType {
   interruptCurrentCycle: () => void
 }
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 export const CyclesContext = createContext({} as CyclesContextType)
 
 interface CyclesContextProviderProps {
-  children: ReactNode
+  children: React.ReactNode
 }
 
 export function CyclesContextProvider ({ children }: CyclesContextProviderProps): any {
@@ -59,8 +56,7 @@ export function CyclesContextProvider ({ children }: CyclesContextProviderProps)
     )
   }
 
-  function createNewCycle (data: CreateCycleData): any { // função para criar um novo ciclo
-    console.log('teste')
+  function CreateNewCycle (data: CreateCycleData): any { // função para criar um novo ciclo
     const newCycle: Cycle = {
       id: String(new Date().getTime()),
       task: data.task,
@@ -75,7 +71,7 @@ export function CyclesContextProvider ({ children }: CyclesContextProviderProps)
     // reset()
   }
 
-  function interruptCurrentCycle (): any { // função para interromper o ciclo
+  function InterruptCurrentCycle (): any { // função para interromper o ciclo
     setCycles((state) => state.map((cycle) => {
       if (cycle.id === activeCycleId) {
         return {
@@ -91,17 +87,16 @@ export function CyclesContextProvider ({ children }: CyclesContextProviderProps)
   }
 
   return (
-    <CyclesContext.Provider value={{
-      cycles,
-      activeCycle,
-      activeCycleId,
-      amountSecondsPassed,
-      markCurrentCycleAsFinished,
-      setSecondsPassed,
-      createNewCycle,
-      interruptCurrentCycle
-    }}>
-      {children}
-    </CyclesContext.Provider>
+        <CyclesContext.Provider value={{
+          activeCycle,
+          activeCycleId,
+          amountSecondsPassed,
+          markCurrentCycleAsFinished,
+          setSecondsPassed,
+          CreateNewCycle,
+          InterruptCurrentCycle
+        }}>
+            {children}
+        </CyclesContext.Provider>
   )
 }
