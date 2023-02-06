@@ -1,3 +1,4 @@
+import { differenceInSeconds } from 'date-fns'
 import React, { createContext, useEffect, useReducer, useState } from 'react'
 
 import { addNewCycleAction, interruptCurrentCycleAction, markCurrentCycleAsFinishedAction } from '../reducers/cycles/actions'
@@ -34,6 +35,8 @@ export function CyclesContextProvider ({ children }: CyclesContextProviderProps)
   () => {
     const stateJSON = localStorage.getItem('@isaac-pomodoro:cycles-state-1.0.0')
 
+    console.log('stored state =' + stateJSON)
+
     if (stateJSON != null) {
       return JSON.parse(stateJSON)
     }
@@ -43,16 +46,27 @@ export function CyclesContextProvider ({ children }: CyclesContextProviderProps)
   // write use state that will store in local storage
 
   useEffect(() => {
+    console.log('cycles state changed')
+    console.log(cyclesState)
     const stateJSON = JSON.stringify(cyclesState)
 
     localStorage.setItem('@isaac-pomodoro:cycles-state-1.0.0', stateJSON)
   }, [cyclesState])
 
-  const [amountSecondsPassed, setAmountSecondsPassed] = useState(0)
-
   const { cycles, activeCycleId } = cyclesState
 
   const activeCycle = cycles.find((cycle: Cycle) => cycle.id === activeCycleId)
+
+  const [amountSecondsPassed, setAmountSecondsPassed] = useState(() => {
+    if (activeCycle != null) {
+      return differenceInSeconds(
+        new Date(),
+        new Date(activeCycle.startDate ?? new Date())
+      )
+    }
+    return 0
+  }
+  )
 
   function setSecondsPassed (seconds: number): void { // função para setar o tempo
     setAmountSecondsPassed(seconds)

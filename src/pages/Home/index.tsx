@@ -19,12 +19,12 @@ import {
 import { Countdown } from './components/Countdown'
 import { CyclesContext } from '../../context/CyclesContext'
 
-const newCycleFormValidationSchema = zod.object({ // validação do formulario
-  task: zod.string().min(1, 'informe a tarefa'),
+const newCycleFormValidationSchema = zod.object({
+  task: zod.string().min(1, 'Informe a tarefa'),
   minutesAmount: zod
     .number()
-    .min(1, 'O intervalo precisa ser de no max 60 minutos e no minimo 5')
-    .max(60, 'O intervalo precisa ser de no max 60')
+    .min(5, 'O ciclo precisa ser de no mínimo 5 minutos.')
+    .max(60, 'O ciclo precisa ser de no máximo 60 minutos.')
 })
 
 type NewCycleFormData = zod.infer<typeof newCycleFormValidationSchema> // inferir o tipo de dados que eu vou receber
@@ -37,7 +37,7 @@ export function Home () {
     createNewCycle
   } = useContext(CyclesContext)
 
-  const newCycleForm = useForm<NewCycleFormData>({ // validação do formulario
+  const newCycleForm = useForm<NewCycleFormData>({
     resolver: zodResolver(newCycleFormValidationSchema),
     defaultValues: {
       task: '',

@@ -13,14 +13,14 @@ export function Countdown (): any {
   useEffect(() => {
     let interval: number
 
-    console.log(activeCycle)
+    // console.log(activeCycle)
     if (activeCycle != null) {
       interval = setInterval(() => {
         const secondsDifference = differenceInSeconds(
           new Date(),
-          activeCycle.startDate ?? new Date()
+          new Date(activeCycle.startDate ?? new Date())
         )
-        if (secondsDifference >= 5) {
+        if (secondsDifference >= totalSeconds) {
           markCurrentCycleAsFinished()
           setSecondsPassed(totalSeconds)
           clearInterval(interval)
