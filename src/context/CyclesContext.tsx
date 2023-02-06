@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useState } from 'react'
+import React, { createContext, useEffect, useReducer, useState } from 'react'
 
 import { addNewCycleAction, interruptCurrentCycleAction, markCurrentCycleAsFinishedAction } from '../reducers/cycles/actions'
 import { Cycle, cyclesReducer } from '../reducers/cycles/reducer'
@@ -30,7 +30,23 @@ export function CyclesContextProvider ({ children }: CyclesContextProviderProps)
   const [cyclesState, dispatch] = useReducer(cyclesReducer, {
     cycles: [],
     activeCycleId: null
-  })
+  },
+  () => {
+    const stateJSON = localStorage.getItem('@isaac-pomodoro:cycles-state-1.0.0')
+
+    if (stateJSON != null) {
+      return JSON.parse(stateJSON)
+    }
+  }
+  )
+
+  // write use state that will store in local storage
+
+  useEffect(() => {
+    const stateJSON = JSON.stringify(cyclesState)
+
+    localStorage.setItem('@isaac-pomodoro:cycles-state-1.0.0', stateJSON)
+  }, [cyclesState])
 
   const [amountSecondsPassed, setAmountSecondsPassed] = useState(0)
 
